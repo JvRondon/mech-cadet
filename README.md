@@ -1,32 +1,8 @@
 # MECH//CADET — Defesa Orbital
 
-Jogo de ação espacial **não letal** para iniciantes (10–12 anos), feito só com
+Jogo de ação espacial para iniciantes (10–12 anos), feito só com
 HTML + CSS + JavaScript + Canvas 2D + Web Audio API. **Sem bibliotecas externas,
 sem build, sem servidor, sem login.**
-
----
-
-## Como jogar
-
-### Opção 1 — abrir direto (funciona offline)
-
-Clique duas vezes no **`index.html`**. Pronto.
-
-### Opção 2 — servidor local (recomendado)
-
-```bash
-python -m http.server 8000
-```
-
-Depois abra <http://localhost:8000>.
-
-### Opção 3 — GitHub Pages
-
-1. Crie um repositório e envie todos os arquivos (não só o `index.html`).
-2. Em **Settings → Pages**, escolha *Deploy from a branch* → branch `main`, pasta `/ (root)`.
-3. Acesse `https://SEU_USUARIO.github.io/SEU_REPO/`.
-
-Todos os caminhos são relativos (`./js/main.js`), então funciona em subpastas.
 
 ---
 
