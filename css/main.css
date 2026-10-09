@@ -957,6 +957,59 @@ html, body {
   margin-bottom: 24px;
 }
 
+/* Pause screen info panel */
+.pause-info {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+  margin: 24px 0;
+  padding: 16px;
+  background: rgba(0, 217, 255, 0.06);
+  border: 1px solid var(--cyan-dim);
+  border-radius: 8px;
+}
+
+.pause-stat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
+.pause-label {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 1.5px;
+  color: var(--text-dim);
+  text-transform: uppercase;
+}
+
+#pause-mission-name,
+#pause-timer,
+#pause-score,
+#pause-shield {
+  font-family: var(--font-mono);
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--cyan);
+}
+
+.pause-controls {
+  margin: 20px 0 28px;
+}
+
+.pause-hint {
+  font-size: 12px;
+  color: var(--text-dim);
+  margin: 6px 0;
+  letter-spacing: 0.5px;
+}
+
+.pause-hint:first-child {
+  color: var(--warning);
+  font-weight: 600;
+}
+
 .victory-content p, .defeat-content p {
   font-size: 16px;
   color: var(--text-dim);

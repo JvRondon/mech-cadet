@@ -96,6 +96,12 @@
     el.btnRestart  = document.getElementById('btn-restart');
     el.btnPauseMenu = document.getElementById('btn-pause-menu');
     el.btnCompleteMenu = document.getElementById('btn-complete-menu');
+
+    // Pause screen elements
+    el.pauseMissionName = document.getElementById('pause-mission-name');
+    el.pauseTimer       = document.getElementById('pause-timer');
+    el.pauseScore       = document.getElementById('pause-score');
+    el.pauseShield      = document.getElementById('pause-shield');
   }
 
   function on(node, fn) {
@@ -599,6 +605,25 @@
   }
 
   // ==========================================
+  // TELA DE PAUSE
+  // ==========================================
+
+  function updatePauseScreen(player, ms) {
+    if (!ms) return;
+    var d = ms.data;
+    if (el.pauseMissionName) el.pauseMissionName.textContent = d.title || '—';
+    if (el.pauseTimer) {
+      var timeLeft = Math.max(0, ms.time || 0);
+      el.pauseTimer.textContent = MC.utils.formatTime(timeLeft);
+    }
+    if (el.pauseScore) el.pauseScore.textContent = Math.floor(ms.score || 0);
+    if (el.pauseShield && player) {
+      var pct = Math.round(MC.utils.clamp(player.shield / player.maxShield, 0, 1) * 100);
+      el.pauseShield.textContent = pct + '%';
+    }
+  }
+
+  // ==========================================
   // UTILITÁRIOS
   // ==========================================
 
@@ -637,6 +662,7 @@
     pushEvent: pushEvent,
     updateHUD: updateHUD,
     setLevelUp: setLevelUp,
+    updatePauseScreen: updatePauseScreen,
 
     showVictory: showVictory,
     showDefeat: showDefeat,

@@ -312,6 +312,7 @@
     state.paused = true;
     state.scene = 'pause';
     MC.ui.showScreen('pause');
+    MC.ui.updatePauseScreen(state.player, state.mission);
   }
 
   function resumeGame() {
