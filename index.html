@@ -1,0 +1,240 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="MECH//CADET — Defesa Orbital. Jogo de ação espacial não letal para iniciantes.">
+  <title>MECH//CADET — Defesa Orbital</title>
+  <link rel="stylesheet" href="./css/main.css">
+</head>
+<body>
+  <main id="app">
+    <canvas id="game" width="1280" height="720">
+      Seu navegador precisa suportar Canvas 2D.
+    </canvas>
+
+    <!-- ================= HUD ================= -->
+    <section id="hud" class="hidden" aria-live="polite">
+
+      <div id="hud-top-left">
+        <div id="objective-panel">
+          <span class="hud-label">OBJETIVO</span>
+          <span id="objective-text">—</span>
+          <span id="objective-distance"></span>
+        </div>
+        <div id="hud-log"></div>
+      </div>
+
+      <div id="hud-top-right">
+        <div id="mission-status">
+          <span class="hud-label">MISSÃO</span>
+          <span id="mission-name">—</span>
+          <span id="mission-timer">--:--</span>
+        </div>
+        <div id="hud-radar">
+          <canvas id="radar" width="160" height="120"></canvas>
+        </div>
+      </div>
+
+      <div id="hud-bottom-left">
+        <div class="bar-container">
+          <span class="hud-label">ESCUDO</span>
+          <div class="bar shield-bar"><div id="shield-fill"></div></div>
+        </div>
+        <div class="bar-container">
+          <span class="hud-label">ENERGIA</span>
+          <div class="bar energy-bar"><div id="energy-fill"></div></div>
+        </div>
+        <div class="bar-container hidden" id="station-bar-wrap">
+          <span class="hud-label">INTEGRIDADE DA ESTAÇÃO</span>
+          <div class="bar station-bar"><div id="station-fill"></div></div>
+        </div>
+        <div class="bar-container" id="xp-bar-wrap">
+          <span class="hud-label" id="xp-text">NÍVEL 1</span>
+          <div class="bar xp-bar"><div id="xp-fill"></div></div>
+        </div>
+        <div id="buff-bar"></div>
+      </div>
+
+      <div id="hud-bottom-right">
+        <div class="ability-slot" id="ability-dash">
+          <span class="key-hint">ESPAÇO</span>
+          <div class="cooldown-ring"><div id="dash-cooldown"></div></div>
+          <span class="ability-name">DASH</span>
+        </div>
+        <div class="ability-slot hidden" id="laser-cooldown">
+          <span class="key-hint" id="laser-key">SHIFT</span>
+          <div class="cooldown-ring"><div id="laser-fill"></div></div>
+          <span class="ability-name">LASER</span>
+        </div>
+        <div class="ability-slot" id="ability-overdrive">
+          <span class="key-hint">Q</span>
+          <div class="cooldown-ring"><div id="overdrive-fill"></div></div>
+          <span class="ability-name">OVERDRIVE</span>
+        </div>
+      </div>
+
+      <div id="hint-bar" class="hidden"></div>
+      <div id="interact-prompt" class="hidden"></div>
+      <div id="hud-alert" class="hidden"></div>
+      <div id="hud-score">PONTOS: <span id="score-value">0</span></div>
+      <div id="hud-hint">ESC para pausar</div>
+    </section>
+
+    <!-- ================= MENU ================= -->
+    <section id="menu">
+      <div class="menu-content">
+        <h1 class="game-title">MECH<span class="title-accent">//</span>CADET</h1>
+        <p class="game-subtitle">DEFESA ORBITAL</p>
+        <p class="game-tagline">Seu Mech. Sua missão. Sua escolha.</p>
+        <button id="btn-start" class="btn-primary" type="button">INICIAR MISSÃO</button>
+        <button id="btn-fullscreen" class="btn-secondary" type="button">TELA CHEIA</button>
+        <p class="menu-hint">WASD para mover • Mouse para mirar • Clique para atirar • Shift: Laser</p>
+      </div>
+    </section>
+
+    <!-- ================= BOOT ================= -->
+    <section id="boot" class="hidden">
+      <pre id="boot-log"></pre>
+      <p id="boot-continue" class="boot-continue hidden">[ PRESSIONE ENTER ]</p>
+    </section>
+
+    <!-- ================= BRIEFING ================= -->
+    <section id="briefing" class="hidden">
+      <div class="briefing-content">
+        <h2 id="briefing-title">MISSÃO</h2>
+        <p id="briefing-text"></p>
+        <div id="briefing-objectives"></div>
+        <div id="brief-concept" class="hidden">
+          <span class="concept-tag">CONCEITO DE HOJE</span>
+          <strong id="brief-concept-name"></strong>
+          <p id="brief-concept-line"></p>
+        </div>
+        <button id="btn-deploy" class="btn-primary" type="button">ENTRAR NO MECH</button>
+        <p class="menu-hint">Ou pressione ENTER</p>
+      </div>
+    </section>
+
+    <!-- ================= VITÓRIA ================= -->
+    <section id="victory" class="hidden">
+      <div class="victory-content">
+        <h2>MISSÃO CONCLUÍDA</h2>
+        <p id="victory-stats"></p>
+        <p id="victory-rank"></p>
+        <div id="victory-lesson" class="hidden">
+          <div class="lesson-head">
+            <span class="concept-tag">BÚFICA DA CENTRAL</span>
+            <strong id="lesson-concept"></strong>
+          </div>
+          <ul id="lesson-lines"></ul>
+        </div>
+        <div id="victory-challenge" class="hidden">
+          <span class="challenge-label">DESAFIO BÔNUS</span>
+          <span id="challenge-text"></span>
+          <span id="challenge-status"></span>
+        </div>
+        <button id="btn-next-mission" class="btn-primary" type="button">PRÓXIMA MISSÃO</button>
+        <button id="btn-back-menu" class="btn-secondary" type="button">MENU</button>
+      </div>
+    </section>
+
+    <!-- ================= DERROTA ================= -->
+    <section id="defeat" class="hidden">
+      <div class="defeat-content">
+        <h2 id="defeat-title">MISSÃO NÃO CONCLUÍDA</h2>
+        <p id="defeat-reason"></p>
+        <p>Não se preocupe, cadete. Tente novamente!</p>
+        <button id="btn-retry" class="btn-primary" type="button">TENTAR NOVAMENTE</button>
+        <button id="btn-defeat-menu" class="btn-secondary" type="button">MENU</button>
+      </div>
+    </section>
+
+    <!-- ================= TREINAMENTO CONCLUÍDO ================= -->
+    <section id="complete" class="hidden">
+      <div class="victory-content">
+        <h2>TREINAMENTO CONCLUÍDO</h2>
+        <p class="menu-hint" style="margin:0 0 10px 0">CAMPANHA COMPLETA</p>
+        <p id="complete-stats"></p>
+        <p id="complete-rank"></p>
+        <div class="concepts" id="complete-concepts" style="margin-top:12px;font-size:0.92rem;opacity:0.9;display:flex;flex-wrap:wrap;gap:8px;justify-content:center"></div>
+        <p class="recap-note" style="margin-top:14px">Sensores, distância, tempo e movimento: é a mesma coisa que um robô de verdade usa.</p>
+        <button id="btn-complete-menu" class="btn-primary" type="button" style="margin-top:16px">VOLTAR AO MENU</button>
+      </div>
+    </section>
+
+    <!-- ================= SELEÇÃO DE DIFICULDADE ================= -->
+    <section id="difficulty" class="hidden">
+      <div class="menu-content">
+        <h1 class="game-title">MECH<span class="title-accent">//</span>CADET</h1>
+        <p class="game-subtitle">SELECIONAR DIFICULDADE</p>
+        <p class="game-tagline">Escolha o modo que melhor se adapta a você.</p>
+        <button id="btn-diff-normal" class="btn-primary" type="button">
+          NORMAL — Treinamento de Cadete
+        </button>
+        <p class="diff-desc">Mais acessível. Menos inimigos, mais XP, mais auxílio. Ideal para novos jogadores (8–12 anos).</p>
+        <button id="btn-diff-hard" class="btn-primary" type="button" style="margin-top:20px">
+          DIFÍCIL — Operação de Combate
+        </button>
+        <p class="diff-desc">Experiência atual e completa. Maior desafio. Indicado para pilotos experientes.</p>
+        <button id="btn-diff-back" class="btn-secondary" type="button" style="margin-top:24px">VOLTAR AO MENU</button>
+      </div>
+    </section>
+      <div class="pause-content">
+        <h2>PAUSADO</h2>
+        <button id="btn-resume" class="btn-primary" type="button">CONTINUAR</button>
+        <button id="btn-restart" class="btn-secondary" type="button">REINICIAR MISSÃO</button>
+        <button id="btn-pause-menu" class="btn-secondary" type="button">MENU</button>
+      </div>
+    </section>
+
+    <!-- ================= LEVEL UP (V2) ================= -->
+    <!-- O jogo congela aqui. Nada de tempo correndo atrás da escolha. -->
+    <section id="levelup" class="hidden">
+      <div class="levelup-content">
+        <span class="concept-tag">SUBIU DE NÍVEL</span>
+        <h2 id="levelup-title">NÍVEL 2 — ESCOLHA UM UPGRADE</h2>
+        <div id="levelup-options"></div>
+        <p class="menu-hint">Clique em um. Não tem resposta errada.</p>
+      </div>
+    </section>
+
+    <!-- ================= ERRO FATAL ================= -->
+    <section id="fatal" class="hidden">
+      <div class="victory-content">
+        <h2 style="color:#ff4d5a">FALHA AO INICIAR</h2>
+        <p id="fatal-message"></p>
+        <p>Abra o console do navegador (F12) para ver os detalhes.</p>
+      </div>
+    </section>
+  </main>
+
+  <!-- Scripts clássicos: funcionam com file:// e no GitHub Pages.
+       A ordem importa — cada arquivo usa o que o anterior definiu. -->
+  <script src="./js/config.js"></script>
+  <script src="./js/utils.js"></script>
+  <script src="./js/storage.js"></script>
+  <script src="./js/audio.js"></script>
+  <script src="./js/particles.js"></script>
+
+  <!-- V2: sistemas compartilhados (sem dependência de tela) -->
+  <script src="./js/systems/pool.js"></script>
+  <script src="./js/systems/upgrades.js"></script>
+  <script src="./js/systems/xp.js"></script>
+  <script src="./js/systems/powerups.js"></script>
+  <script src="./js/systems/laser.js"></script>
+
+  <script src="./js/entities.js"></script>
+
+  <!-- V2: precisam de entities + missions -->
+  <script src="./data/missions.js"></script>
+  <script src="./js/missions.js"></script>
+  <script src="./js/systems/spawner.js"></script>
+  <script src="./js/systems/activityDirector.js"></script>
+
+  <script src="./js/renderer.js"></script>
+  <script src="./js/ui.js"></script>
+  <script src="./js/input.js"></script>
+  <script src="./js/game.js"></script>
+  <script src="./js/main.js"></script>
+</body>
+</html>
